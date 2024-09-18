@@ -1,0 +1,11 @@
+.profile {
+}
+.profile::before {
+  content: "";
+  position: absolute;
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+  top: -18px;
+  right: 40%;
+}

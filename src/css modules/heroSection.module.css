@@ -1,0 +1,9 @@
+.hero_section{
+    background-image: url("../../public/images/about/home-hotspot-img-1.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 80vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}

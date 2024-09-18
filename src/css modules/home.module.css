@@ -1,0 +1,123 @@
+.text {
+  transform: translate(-50%, -50%);
+}
+
+.text h1 {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* .sectionThree::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(39, 39, 39, 0.384);
+  z-index: 10;
+} */
+.headeranimation {
+  display: inline-block;
+  white-space: nowrap;
+  position: absolute;
+
+  left: 100%;
+  transform: translateY(-50%);
+
+  animation: headerMoving 40s linear infinite;
+}
+.headeranimation2 {
+  display: inline-block;
+  white-space: nowrap;
+  animation: headerMoving2 40s linear infinite;
+  animation-delay: 20s;
+  position: absolute;
+  left: 100%;
+}
+
+.mianContainer:hover {
+  .headeranimation,
+  .headeranimation2 {
+    animation-play-state: paused;
+  }
+}
+.headeranimation span,
+.headeranimation2 span {
+  padding-right: 20px;
+  padding-left: 20px;
+  transition: all 0.2s;
+  color: rgba(236, 233, 233, 0.884);
+}
+.headeranimation span:hover,
+.headeranimation2 span:hover {
+  cursor: pointer;
+}
+
+@keyframes headerMoving {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-200%);
+  }
+}
+@keyframes headerMoving2 {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-200%);
+  }
+}
+.shopNowBtn:hover {
+  background-color: white;
+  color: black;
+  border: 1px solid var(--mainColor);
+  transition: all 0.4s;
+  span:nth-child(2) {
+    background-color: var(--mainColor);
+    color: white;
+    transition: all 0.4s;
+    overflow: hidden;
+
+    svg {
+      animation: arrowGo 0.4s 1 linear;
+    }
+  }
+}
+
+@keyframes arrowGo {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(200%);
+  }
+  51% {
+    transform: translateX(-200%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+.swiperSlideCustom {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+}
+
+.swiper-slide-active.swiper-slide-custom {
+  opacity: 1;
+  visibility: visible;
+}
+
+.transforming::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(29, 28, 28, 0.664);
+  z-index: 5;
+}
