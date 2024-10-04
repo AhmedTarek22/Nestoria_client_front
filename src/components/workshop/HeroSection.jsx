@@ -6,7 +6,20 @@ import { faStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
 import ProductCarousel from "./ProductSection";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Loader from "../Loader";
+import axiosInstance from "../../apis/axiosConfig";
+import { toast } from "react-toastify";
+import { FaStar } from "react-icons/fa";
 
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../../firebase";
+import { useUserInfoContext } from "../../context/UserProvider";
 
 const HeroSection = () => {
   const [workshop, setWorkshop] = useState(null);
@@ -15,6 +28,8 @@ const HeroSection = () => {
 
   const { workshopId } = useParams();
   console.log("workshopId ", workshopId);
+  const { currentUser } = useUserInfoContext();
+  const userId = currentUser?._id;
 
   // Moved useNavigate to the top, before any early return
   const navigate = useNavigate();
@@ -22,12 +37,11 @@ const HeroSection = () => {
   useEffect(() => {
     const fetchWorkshop = async () => {
       try {
-        const response = await axios.get(
-
-          `http://localhost:5000/api/v1/fur/workshops/${workshopId}?page=2`
-
+        const response = await axiosInstance.get(
+          `/api/v1/fur/users/${workshopId}`
         );
-        const workShopDetails = response.data.products[0].workshop_id;
+        console.log("workshoppp ", response.data.user);
+        const workShopDetails = response.data.user;
         setWorkshop(workShopDetails);
         setLoading(false);
       } catch (err) {
@@ -41,9 +55,11 @@ const HeroSection = () => {
 
   // Loading state
   if (loading) {
-    return  <div className=" text-center flex justify-center items-center h-screen bg-black font-serif">
-      <Loader />
-    </div>
+    return (
+      <div className=" text-center flex justify-center items-center h-screen bg-black font-serif">
+        <Loader />
+      </div>
+    );
   }
 
   // Error state
@@ -51,8 +67,67 @@ const HeroSection = () => {
     return <div className="text-white text-center">Error: {error}</div>;
   }
 
-  const handleChatSelect = () => {
-    navigate("/chat");
+  const createChat = async (
+    buyerId,
+    buyerName,
+    sellerId,
+    sellerPhoto,
+    sellerName
+  ) => {
+    try {
+      // البحث عن محادثة قائمة بين المشتري والبائع
+      const chatQuery = query(
+        collection(db, "chats"),
+        where("buyerId", "==", buyerId),
+        where("sellerId", "==", sellerId)
+      );
+
+      const existingChats = await getDocs(chatQuery);
+
+      // إذا كانت المحادثة موجودة، لا نقوم بإنشاء محادثة جديدة
+      if (!existingChats.empty) {
+        console.log("Chat already exists");
+        return existingChats.docs[0].id; // إرجاع معرف المحادثة الحالية
+      }
+
+      // إنشاء محادثة جديدة
+      const newChat = await addDoc(collection(db, "chats"), {
+        buyerId: buyerId,
+        buyerName: buyerName,
+        sellerId: sellerId,
+        sellerPhoto: sellerPhoto,
+        sellerName: sellerName,
+        lastMessage: "", // سيتم تحديثه بعد إرسال الرسالة الأولى
+        typing: false, // حالة الكتابة
+        read: false, // حالة القراءة
+        timestamp: serverTimestamp(), // توقيت المحادثة
+      });
+
+      console.log("New chat created with ID:", newChat.id);
+      return newChat.id; // إرجاع معرف المحادثة الجديدة
+    } catch (error) {
+      console.error("Error creating chat: ", error);
+    }
+  };
+
+  const handleMessageMeClick = async (workshop) => {
+    console.log(workshop);
+    setLoading(true);
+    // إنشاء المحادثة عند النقر على الزر
+    const chatId = await createChat(
+      userId,
+      currentUser?.fullName,
+      workshop._id,
+      workshop.registrationDocuments.personalPhoto,
+      workshop.name
+    );
+    if (chatId) {
+      // توجيه المستخدم إلى صفحة المحادثة
+      console.log("Redirecting to chat:", chatId);
+      navigate("/chat");
+      // هنا يمكن إضافة منطق للتوجيه إلى صفحة الشات
+    }
+    setLoading(false);
   };
 
   return (
@@ -94,7 +169,10 @@ const HeroSection = () => {
           <div className="w-1/2 pr-8">
             <h2 className="text-3xl font-semibold mb-4">{workshop.name}</h2>
             <p className="text-gray-300 text-lg leading-relaxed mb-4">
-              Location: {workshop.location}
+              Owner: {workshop.fullName}
+            </p>
+            <p className="text-gray-300 text-lg leading-relaxed mb-4">
+              Location: {workshop.address}
             </p>
             <p className="text-gray-400 mb-4">{workshop.description}</p>
           </div>
@@ -108,22 +186,31 @@ const HeroSection = () => {
             </p>
 
             <div className="mb-6">
-              <p className="text-gray-300 mb-2">Rating:</p>
-              <div className="flex space-x-2">
-                <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
-                <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
-                <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
-                <FontAwesomeIcon icon={faStar} className="text-yellow-400" />
-                <FontAwesomeIcon
-                  icon={faStarHalfAlt}
-                  className="text-yellow-400"
-                />
+              <p className="text-gray-300 mb-2">
+                Rating: {workshop.averageRating.toFixed(1)}
+              </p>
+              <div className="flex items-center mb-2">
+                {[...Array(5)].map((_, index) => (
+                  <FaStar
+                    key={index}
+                    className={`${
+                      index < (workshop.averageRating || 0)
+                        ? "text-yellow-500"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+                <span className="ml-2">
+                  ({workshop && workshop.ratings && workshop.ratings.length}
+                  {"  "}
+                  customer reviews)
+                </span>
               </div>
             </div>
 
             <button
               className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded w-full"
-              onClick={handleChatSelect}
+              onClick={() => handleMessageMeClick(workshop)}
             >
               Message me!
             </button>
@@ -131,13 +218,43 @@ const HeroSection = () => {
         </div>
       </section>
 
-      <ProductCarousel />
+      <ProductCarousel workshopId={workshop._id} />
+      <div className="flex justify-start mt-5 ml-5">
+        <div className="w-fit bg-orange-500 text-white border-orange-500 px-6 py-3 rounded-full border hover:bg-orange-500 hover:border-orange-500 transition-colors duration-300">
+          Reviews ({workshop?.ratings?.length})
+        </div>
+      </div>
+      <div className="p-6 rounded-lg text-white">
+        {workshop && workshop.ratings && workshop.ratings.length > 0 ? (
+          workshop.ratings.map((review, index) => (
+            <div key={index} className="border-b border-gray-700 mb-4 pb-4">
+              <div className="flex items-center mb-2">
+                {[...Array(5)].map((_, starIndex) => (
+                  <FaStar
+                    key={starIndex}
+                    className={`${
+                      starIndex < review.rating
+                        ? "text-yellow-500"
+                        : "text-gray-300"
+                    }`}
+                  />
+                ))}
+                <span className="ml-2 text-gray-300">
+                  {review.user?.fullName || "user"}
+                </span>
+              </div>
+              <p className="text-gray-400">{review.comment}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-400">No reviews yet.</p>
+        )}
+      </div>
     </div>
   );
 };
 
 export default HeroSection;
-
 
 // import React, { useState, useEffect } from "react";
 // import axios from "axios";

@@ -3,7 +3,9 @@ import InputField from "../components/Input";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
+import { useSelector } from "react-redux";
 function ForgotPassword() {
+  const translate = useSelector((state) => state.language.translation);
   const [user, setUser] = useState({
     email: "",
   });
@@ -96,14 +98,13 @@ function ForgotPassword() {
     <div className="flex justify-center items-center min-h-screen bg-[#171716]">
       <div className="bg-black p-10 rounded-xl shadow-xl w-full max-w-xl mx-auto">
         <h2 className="text-white text-3xl font-200 mb-6 text-center font-['Segoe UI']">
-          Forgot Password
+          {translate.Forgot_Password}
         </h2>
         {isLoading && <Loader />}
         <form onSubmit={handleSubmit}>
           <p className="text-green-500 text-md mt-2 text-center">{success}</p>
           <p className="text-gray-400 text-md mt-2 text-center max-w-[70%] mx-auto my-4">
-            Enter your email address and we will send you an email to reset your
-            password
+            {translate.Enter_your_email}
           </p>
           <div className="h-[40px] mb-[40px] w-full">
             <InputField
@@ -123,7 +124,7 @@ function ForgotPassword() {
               className="w-full bg-black  hover:bg-orange-600 hover:text-white text-orange-500 font-bold py-3 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               type="submit"
             >
-              Send Email
+              {translate.Send_Email}
             </button>
           </div>
         </form>

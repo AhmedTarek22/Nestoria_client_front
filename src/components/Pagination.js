@@ -1,6 +1,6 @@
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   return (
-    <div className="flex justify-center mt-8">
+    <div className="flex justify-center mt-8 flex-wrap">
       {Array.from({ length: totalPages }, (_, index) => (
         <button
           key={index}

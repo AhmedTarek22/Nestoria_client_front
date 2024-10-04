@@ -7,8 +7,10 @@ import { FaDollarSign } from "react-icons/fa6";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { IoMdArrowDropup } from "react-icons/io";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BiArrowFromBottom } from "react-icons/bi";
+import { useDispatch, useSelector } from "react-redux";
+import { setLanguage } from "../Redux/languageSlice";
 
 function Navbar() {
   const [showCurrency, setShowCurrency] = useState(false);
@@ -16,8 +18,39 @@ function Navbar() {
     "INR",
     <LuIndianRupee className="text-white" />
   );
+
+  const dispatch = useDispatch();
+  const switchToEnglish = () => {
+    dispatch(setLanguage("en"));
+  };
+  const switchToArabic = () => {
+    dispatch(setLanguage("ar"));
+  };
+  const translate = useSelector((state) => state.language.translation);
+  const lang = useSelector((lang) => lang.language.myLang);
+
+  const currencyRef = useRef(null);
+  const handleClickOutside = (event) => {
+    if (
+      showCurrency &&
+      currencyRef.current &&
+      !currencyRef.current.contains(event.target)
+    ) {
+      setShowCurrency(false);
+    }
+  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCurrency]);
+
   return (
-    <div className="bg-black overflow-hidden min-h-[50px] flex justify-center items-center">
+    <div
+      ref={currencyRef}
+      className="bg-black min-h-[50px] flex justify-center items-center"
+    >
       <div className="container flex justify-between items-center w-[1440px] mx-auto">
         <div className="social flex justify-center items-center gap-4 px-2 ">
           <FaFacebookF className="text-white text-xl hover:text-[--mainColor] transition-all duration-150 cursor-pointer" />
@@ -30,16 +63,16 @@ function Navbar() {
           <p
             className={`${styles.headeranimation} z-30 text-white flex items-center gap-10 py-3 `}
           >
-            <span>Join Our Schema And Earn Rewards!</span>
-            <span>Invite Friends And Earn Rewards!</span>
-            <span>Free Shipping On Order Over $100!</span>
+            <span>{translate.p1}</span>
+            <span>{translate.p2}</span>
+            <span>{translate.p3}</span>
           </p>
           <p
             className={`${styles.headeranimation2} z-30 text-white flex items-center gap-10 py-3`}
           >
-            <span>Join Our Schema And Earn Rewards!</span>
-            <span>Invite Friends And Earn Rewards!</span>
-            <span>Free Shipping On Order Over $100!</span>
+            <span>{translate.p1}</span>
+            <span>{translate.p2}</span>
+            <span>{translate.p3}</span>
           </p>
         </div>
         <div
@@ -48,24 +81,34 @@ function Navbar() {
             setShowCurrency((prev) => !prev);
           }}
         >
-          INR, <LuIndianRupee className="text-sm" />
+          {lang === "en" ? translate.English : translate.Arabic}
           {showCurrency ? (
-            <IoMdArrowDropup className="ml-3" />
+            <IoMdArrowDropup className="mx-2" />
           ) : (
-            <IoMdArrowDropdown className="ml-3" />
+            <IoMdArrowDropdown className="mx-2" />
           )}
-          {/* {showCurrency && ( */}
-          <ul className="absolute bottom-[-95px] right-0 bg-black w-[150px] z-50">
-            <li className="text-white">
-              INR,
-              <LuIndianRupee className="text-sm" />
-            </li>
-            <li>
-              USD,
-              <FaDollarSign className="text-sm" />
-            </li>
-          </ul>
-          {/* )} */}
+          {showCurrency && (
+            <ul className="absolute top-8 text-center flex flex-col gap-1 p-1 w-full rounded-md bg-[#101010] z-[200]">
+              <li
+                onClick={switchToArabic}
+                className={`text-white ${
+                  lang === "ar" && "bg-[#DD7210]"
+                } hover:bg-[#DD7210] pb-1 rounded-md`}
+              >
+                {translate.Arabic}
+                {/* <LuIndianRupee className="text-sm" /> */}
+              </li>
+              <li
+                onClick={switchToEnglish}
+                className={`text-white ${
+                  lang === "en" && "bg-[#DD7210]"
+                } hover:bg-[#DD7210] pb-1 rounded-md`}
+              >
+                {translate.English}
+                {/* <FaDollarSign className="text-sm" /> */}
+              </li>
+            </ul>
+          )}
         </div>
       </div>
     </div>

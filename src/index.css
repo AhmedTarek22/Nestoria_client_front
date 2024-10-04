@@ -21,6 +21,7 @@ body {
 html,
 body {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 code {
@@ -98,4 +99,71 @@ code {
   100% {
     transform: translateY(-200%);
   }
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--mainColor);
+  border-radius: 10px;
+  border: 2px solid #f1f1f1;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mainColor) rgba(100, 100, 100, 0.651);
+}
+
+.custom-scrollbar,
+.chat-container {
+  scrollbar-width: none;
+}
+
+.sent {
+  background-color: #005c4b;
+  text-align: right;
+  /* display: flex;
+  justify-content: space-between; */
+  /* direction: rtl; */
+}
+
+.received {
+  background-color: #444d56;
+  text-align: left;
+}
+.senderMessageStyle {
+  position: relative;
+}
+.senderMessageStyle::after {
+  content: "";
+  position: absolute;
+  border-width: 12px;
+  border-color: transparent transparent transparent #005c4b;
+  border-style: solid;
+  top: 22px;
+  right: -14px;
+  border-radius: 8px;
+}
+.receiverMessageStyle {
+  position: relative;
+  display: flex;
+  justify-content: start;
+  margin-left: 10px;
+}
+
+.receiverMessageStyle::after {
+  content: "";
+  position: absolute;
+  border-width: 12px;
+  border-color: transparent #444d56 transparent transparent;
+  border-style: solid;
+  top: 24px;
+  left: -14px;
+  border-radius: 8px;
 }

@@ -10,13 +10,14 @@ import { toast } from "react-toastify";
 import axiosInstance from "../apis/axiosConfig";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 function ContactUs() {
+  const translate = useSelector((state) => state.language.translation);
   const regexName = /^[a-zA-Z][a-zA-Z ]{2,30}$/;
   const regexPhone = /^01[0125][0-9]{8}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-  const regexProblem = /^[a-zA-Z][a-zA-Z ]{10,100}$/;
-
+  const regexProblem = /^.{10,1000}$/;
   const [problemDetails, setProblemDetails] = useState({
     userName: "",
     userMobile: "",
@@ -132,7 +133,7 @@ function ContactUs() {
   return (
     <div>
       {/* section header */}
-      <HeaderPages namePage="Contact Us"></HeaderPages>
+      <HeaderPages namePage={`${translate.contact_us}`}></HeaderPages>
       {/* section drop up */}
       <section
         style={{
@@ -146,14 +147,12 @@ function ContactUs() {
         className="text-center py-12 px-6 md:px-10"
       >
         <div className="lg:w-1/2 m-auto px-11">
-          <p className="text-[#C5660E]">DROP US A LINE</p>
+          <p className="text-[#C5660E]">{translate.DROP_US_LINE}</p>
           <h2 className="text-white text-4xl md:text-6xl my-6">
-            Round-the-clock Service
+            {translate.Round_the_clock_Service}
           </h2>
           <p className="text-[#9C9C9C] text-[17px] md:text-[15px] font-bold">
-            Sed id semper risus in hendrerit gravida rutrum quisque. Vitae proin
-            sagittis nisl Vel elit scelerisque mauris rhoncus mattis rhoncus
-            urna.
+            {translate.Sed_id_semper}
           </p>
         </div>
 
@@ -161,29 +160,30 @@ function ContactUs() {
           <form onSubmit={(e) => handleSendProblem(e)}>
             {/* Name and Mobile Number */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
+              <div className="flex flex-col items-start gap-2">
                 <input
                   type="text"
-                  placeholder="Name"
+                  placeholder={`${translate.Name}`}
                   name="name"
                   value={problemDetails.userName}
                   onChange={(e) => handleProblemDetails(e)}
                   className="w-full bg-[#101010] text-white py-4 px-8 rounded-3xl border border-[#5E5E5E] focus:outline-none focus:border-orange-500 duration-500"
                 />
-                <span className="text-red-500 text-sm font-semibold">
+                <span className="text-red-500 text-sm font-semibold ms-2">
                   {errors.userNameError}
                 </span>
               </div>
-              <div>
+              <div className="flex flex-col items-start gap-2">
                 <input
-                  type="text"
-                  placeholder="Mobile Number"
+                  type="tel"
+                  maxLength={11}
+                  placeholder={`${translate.Mobile_Number}`}
                   name="phone"
                   value={problemDetails.userMobile}
                   onChange={(e) => handleProblemDetails(e)}
                   className="w-full bg-[#101010] border border-[#5E5E5E] text-white py-4 px-8 rounded-3xl focus:outline-none focus:border-orange-500 duration-500"
                 />
-                <span className="text-red-500 text-sm font-semibold">
+                <span className="text-red-500 text-sm font-semibold ms-2">
                   {errors.userMobileError}
                 </span>
               </div>
@@ -193,7 +193,7 @@ function ContactUs() {
             <div className="mb-4">
               <input
                 type="email"
-                placeholder="Mail ID"
+                placeholder={`${translate.Mail_ID}`}
                 name="email"
                 value={problemDetails.userEmail}
                 onChange={(e) => handleProblemDetails(e)}
@@ -207,7 +207,7 @@ function ContactUs() {
             {/* Additional Information */}
             <div className="mb-6">
               <textarea
-                placeholder="Additional Information"
+                placeholder={`${translate.Additional_Information}`}
                 name="problem"
                 value={problemDetails.userProblem}
                 onChange={(e) => handleProblemDetails(e)}
@@ -222,10 +222,16 @@ function ContactUs() {
             {/* Submit Button */}
             <div className="flex justify-center">
               <button
+                disabled={
+                  !problemDetails.userName ||
+                  !problemDetails.userMobile ||
+                  !problemDetails.userEmail ||
+                  !problemDetails.userProblem
+                }
                 type="submit"
                 className="bg-orange-500 text-white text-[17px] py-3 px-8 rounded-3xl hover:bg-white hover:text-black duration-500"
               >
-                Submit Query
+                {translate.Submit_Query}
               </button>
             </div>
           </form>
@@ -255,12 +261,10 @@ function ContactUs() {
             <div>
               <Link to="">
                 <h4 className="text-2xl text-white hover:text-orange-500 duration-500">
-                  Transit Protocol
+                  {translate.Transit_Protocol}
                 </h4>
               </Link>
-              <p className="text-[#9D9D9D]">
-                Eget arcu dictum varius duis at lorem donec.
-              </p>
+              <p className="text-[#9D9D9D]">{translate.Eget_arcu}</p>
             </div>
           </div>
           <div className="content flex items-center gap-5">
@@ -273,12 +277,10 @@ function ContactUs() {
             <div>
               <Link to="">
                 <h4 className="text-2xl text-white hover:text-orange-500 duration-500">
-                  Chat Assistance
+                  {translate.Chat_Assistance}
                 </h4>
               </Link>
-              <p className="text-[#9D9D9D]">
-                Tuam quisque id diam vel quam aecenas.
-              </p>
+              <p className="text-[#9D9D9D]">{translate.Tuam_quisque_id}</p>
             </div>
           </div>
           <div className="content flex items-center gap-5">
@@ -291,12 +293,10 @@ function ContactUs() {
             <div>
               <Link to="">
                 <h4 className="text-2xl text-white hover:text-orange-500 duration-500">
-                  Email Interaction
+                  {translate.Email_Interaction}
                 </h4>
               </Link>
-              <p className="text-[#9D9D9D]">
-                Quis varius quam id diam vel aecenas.
-              </p>
+              <p className="text-[#9D9D9D]">{translate.Quis_varius}</p>
             </div>
           </div>
           <div className="content flex items-center gap-5">
@@ -309,12 +309,10 @@ function ContactUs() {
             <div>
               <Link to="">
                 <h4 className="text-2xl text-white hover:text-orange-500 duration-500">
-                  Global Stores
+                  {translate.Global_Stores}
                 </h4>
               </Link>
-              <p className="text-[#9D9D9D]">
-                Condimentum id venenatis a vitae sapien.
-              </p>
+              <p className="text-[#9D9D9D]">{translate.Condimentum_id}</p>
             </div>
           </div>
         </div>

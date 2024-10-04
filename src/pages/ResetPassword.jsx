@@ -7,7 +7,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { FaRegEyeSlash } from "react-icons/fa";
 
 import axios from 'axios';
+import { useSelector } from 'react-redux';
 function ResetPassword() {
+  const translate = useSelector((state) => state.language.translation);
   const [user, setUser] = useState({
     password: '',
   });
@@ -92,12 +94,12 @@ console.log('Form submitted:', user, newErrors);
   return (
     <div className="flex justify-center items-center min-h-screen bg-[#171716]">
       <div className="bg-black p-10 rounded-xl shadow-xl w-full max-w-xl mx-auto">
-        <h2 className="text-white text-3xl font-200 mb-6 text-center font-['Segoe UI']"> Reset Password</h2>
+        <h2 className="text-white text-3xl font-200 mb-6 text-center font-['Segoe UI']"> {translate.Reset_Password}</h2>
         <form onSubmit={handleSubmit}>
         <p className="text-red-500 text-md mt-2">{serverErr}</p>
      
            <label className="block text-gray-400 text-sm font-medium mb-2" htmlFor="email">
-             Reset Password
+             {translate.Reset_Password}
             </label>
            <div className='h-[40px] mb-[40px] w-full'>
           <div className="mb-6">

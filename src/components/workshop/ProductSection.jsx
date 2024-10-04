@@ -1,25 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faStarHalfAlt, faStar as faStarOutline } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faStar,
+  faStarHalfAlt,
+  faStar as faStarOutline,
+} from "@fortawesome/free-solid-svg-icons";
 import "../../css modules/productSection.module.css";
+import axiosInstance from "../../apis/axiosConfig";
+import { useNavigate } from "react-router-dom";
 
-const ProductCard = () => {
+const ProductCard = ({ workshopId }) => {
+  console.log("workshopId", workshopId);
   const [products, setProducts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalProducts, setTotalPages] = useState(1);
 
   const fetchProducts = async (page = 1) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/v1/fur/workshops/66d87cbeb4d55d64579e20cc?page=${page}&limit=8`);
-      setProducts(response.data.products);
-      console.log("my products :",response.data.products);
-      setTotalPages(Math.ceil(response.data.totalProducts / 8)); // Set total pages based on totalProducts and limit
+      const response = await axios.get(
+        `http://localhost:5000/api/v1/fur/users/${workshopId}`
+      );
+      setProducts(response.data.targetProducts);
+      console.log("my products :", response.data.targetProducts);
+      setTotalPages(Math.ceil(response.data.targetProducts.length / 8)); // Set total pages based on totalProducts and limit
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     }
   };
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchProducts(currentPage);
   }, [currentPage]);
@@ -34,9 +43,15 @@ const ProductCard = () => {
         {[...Array(fullStars)].map((_, i) => (
           <FontAwesomeIcon key={i} icon={faStar} className="text-yellow-500" />
         ))}
-        {halfStar && <FontAwesomeIcon icon={faStarHalfAlt} className="text-yellow-500" />}
+        {halfStar && (
+          <FontAwesomeIcon icon={faStarHalfAlt} className="text-yellow-500" />
+        )}
         {[...Array(emptyStars)].map((_, i) => (
-          <FontAwesomeIcon key={i} icon={faStarOutline} className="text-gray-300" />
+          <FontAwesomeIcon
+            key={i}
+            icon={faStarOutline}
+            className="text-gray-300"
+          />
         ))}
       </div>
     );
@@ -44,7 +59,6 @@ const ProductCard = () => {
 
   return (
     <div className="container mx-auto px-4">
-
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((product) => (
           <div
@@ -63,26 +77,35 @@ const ProductCard = () => {
               <img
                 src={product.images[0]}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-contain"
               />
             </div>
 
             {/* Product Info */}
             <div className="p-4 text-center">
-              <h3 className="text-lg font-semibold mb-2 line-clamp-1">{product.name}</h3>
+              <h3 className="text-lg font-semibold mb-2 line-clamp-1">
+                {product.name}
+              </h3>
               <h4 className="text-md text-gray-500 mb-2">{product.category}</h4>
-              <h4 className=" text-gray-500 mb-2">{product.workshop_id.name}</h4>
+              <h4 className=" text-gray-500 mb-2">
+                {product.workshop_id.name}
+              </h4>
               <p className="text-xl font-bold text-orange-500">
                 ₹ {product.price}
               </p>
-              <div className="mt-2">
-                {renderStars(product.rating)}
+              <div className="mt-2  flex justify-center">
+                {renderStars(product.averageRating ?? 0)}
               </div>
             </div>
 
             {/* Hover Actions */}
             <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex justify-center items-center transition-opacity duration-300">
-              <button className="bg-orange-500 text-white px-4 py-2 rounded shadow hover:bg-orange-600">
+              <button
+                onClick={() => {
+                  navigate(`/product-details/${product._id}`);
+                }}
+                className="bg-orange-500 text-white px-4 py-2 rounded shadow hover:bg-orange-600"
+              >
                 View Details
               </button>
             </div>
@@ -95,13 +118,26 @@ const ProductCard = () => {
         {/* Previous Button */}
         <button
           className={`flex items-center justify-center px-4 py-2 mx-1 rounded-full shadow-md transition-colors duration-300 ${
-            currentPage === 1 ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-gray-800 text-white hover:bg-gray-700'
+            currentPage === 1
+              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+              : "bg-gray-800 text-white hover:bg-gray-700"
           }`}
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
         >
-          <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          <svg
+            className="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            />
           </svg>
         </button>
 
@@ -110,7 +146,9 @@ const ProductCard = () => {
           <button
             key={page + 1}
             className={`px-4 py-2 mx-1 rounded-full shadow-md transition-colors duration-300 ${
-              currentPage === page + 1 ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              currentPage === page + 1
+                ? "bg-orange-500 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
             }`}
             onClick={() => setCurrentPage(page + 1)}
           >
@@ -121,13 +159,28 @@ const ProductCard = () => {
         {/* Next Button */}
         <button
           className={`flex items-center justify-center px-4 py-2 mx-1 rounded-full shadow-md transition-colors duration-300 ${
-            currentPage === totalProducts ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-gray-800 text-white hover:bg-gray-700'
+            currentPage === totalProducts
+              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+              : "bg-gray-800 text-white hover:bg-gray-700"
           }`}
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalProducts))}
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalProducts))
+          }
           disabled={currentPage === totalProducts}
         >
-          <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+          <svg
+            className="w-5 h-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5l7 7-7 7"
+            />
           </svg>
         </button>
       </div>

@@ -10,7 +10,9 @@ import { IoIosWarning } from "react-icons/io";
 import { IoEye } from "react-icons/io5";
 import { useUserInfoContext } from "../context/UserProvider";
 import Loader from "../components/Loader";
+import { useSelector } from "react-redux";
 function Login() {
+  const translate = useSelector((state) => state.language.translation);
   const { setIsLogin, isLogin, setCurrentUser } = useUserInfoContext();
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState({
@@ -92,6 +94,7 @@ function Login() {
         if (user2.data.user.role === "client") {
           localStorage.setItem("token", token);
           localStorage.setItem("role", user2?.data?.user?.role);
+          // localStorage.setItem("user", JSON.stringify(user2?.data?.user));
           setCurrentUser(user2.data.user);
           setIsLogin(true);
           navigate("/");
@@ -103,7 +106,8 @@ function Login() {
         ) {
           localStorage.setItem("token", token);
           localStorage.setItem("role", user2?.data?.user?.role);
-          navigate("/seller ");
+          // navigate("/seller ");
+          window.location.href = "http://localhost:3000/seller";
           toast.info("please complete your registration");
         } else if (user2.data.user.registerStatus === "completed") {
           window.location.href = `http://localhost:4200/dashboard?token=${token}`;
@@ -140,7 +144,10 @@ function Login() {
   return (
     <>
       {isLoading && <Loader />}
-      <IntroSection pageName="Signin" pageTitle="Signin" />
+      <IntroSection
+        pageName={`${translate.Login2}`}
+        pageTitle={`${translate.Login2}`}
+      />
       <div
         className="flex justify-center items-center min-h-[60vh] "
         style={{
@@ -154,7 +161,7 @@ function Login() {
       >
         <div className="bg-black p-10 rounded-xl shadow-xl w-full max-w-xl mx-auto">
           <h2 className="text-white text-3xl font-200 mb-6 text-center font-['Segoe UI']">
-            Log In
+            {translate.Login2}
           </h2>
           <form onSubmit={handleSubmit}>
             <div className="h-[40px] mb-[40px] w-full">
@@ -163,7 +170,7 @@ function Login() {
                 name="email"
                 type="email"
                 value={user.email}
-                placeholder="Please Enter your Email*"
+                placeholder={`${translate.email_login}`}
                 onChange={(e) => setUser({ ...user, email: e.target.value })}
                 onBlur={handleBlur}
                 error={errors.email}
@@ -187,14 +194,14 @@ function Login() {
                       setUser({ ...user, password: e.target.value })
                     }
                     onBlur={handleBlur}
-                    placeholder="Enter your password*"
+                    placeholder={`${translate.password_login}`}
                   />
                   <button
                     type="button"
                     className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-white"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <FaRegEyeSlash /> : <IoEye />}
+                    {showPassword ? <IoEye /> : <FaRegEyeSlash />}
                   </button>
                 </div>
                 {errors.password && (
@@ -211,7 +218,7 @@ function Login() {
                 className="w-full bg-black  hover:bg-orange-600 hover:text-white text-orange-500 font-bold py-3 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
                 type="submit"
               >
-                Log In
+                {translate.Login2}
               </button>
             </div>
             <div className="text-center mt-6">
@@ -219,18 +226,18 @@ function Login() {
                 className="inline-block align-baseline font-bold text-sm text-orange-500 hover:text-orange-600"
                 to="/forgotpassword"
               >
-                Forgot your password?
+                {translate.Forgot_password}
               </Link>
             </div>
             <div className="text-center mt-6 flex justify-center items-center gap-2">
               <span className="inline-block align-baseline font-bold text-sm text-gray-100 ">
-                Don't have an account ?
+                {translate.Donot_have}
               </span>
               <Link
                 className="inline-block align-baseline font-bold text-md text-orange-500 hover:text-orange-700 "
                 to="/register"
               >
-                Signup
+                {translate.Signup}
               </Link>
             </div>
           </form>

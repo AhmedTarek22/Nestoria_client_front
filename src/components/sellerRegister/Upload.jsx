@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const uploadToCloudinary = async (file) => {
     const cloudName = 'yussef'; // Replace with your Cloudinary cloud name
     const uploadPreset = 'ml_default'; // Replace with your upload preset

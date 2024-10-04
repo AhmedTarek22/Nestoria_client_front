@@ -3,9 +3,11 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import userloginApi from "../apis/userloginApi";
 
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 function ConfirmEmail() {
   const navigate = useNavigate();
+  const translate = useSelector((state) => state.language.translation);
   const [serverErr, setServerErr] = useState("");
   const [success, setSuccess] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -44,14 +46,14 @@ function ConfirmEmail() {
     <div className="flex justify-center items-center min-h-screen bg-gray-800">
       <div className="bg-black p-8 rounded-xl shadow-xl w-full max-w-md">
         <h2 className="text-white text-3xl font-200 mb-6 text-center font-['Segoe UI']">
-          Confirm Email
+          {translate.Confirm_Email}
         </h2>
         <form onSubmit={handleSubmit}>
           <p className="text-red-500 text-md mt-2">{serverErr}</p>
           <div className="mb-4">
             <p className="inline-block align-baseline font-bold text-sm text-gray-100 ">
               {" "}
-              when you enter confirm you'll have an account with us{" "}
+              {translate.when_you_enter}{" "}
             </p>
           </div>
 
@@ -60,7 +62,7 @@ function ConfirmEmail() {
               className="w-full bg-black  hover:bg-orange-600 hover:text-white text-orange-500 font-bold py-3 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500"
               type="submit"
             >
-              Confirm
+              {translate.Confirm}
             </button>
           </div>
         </form>

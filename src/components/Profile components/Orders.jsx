@@ -5,15 +5,17 @@ import axiosInstance from "../../apis/axiosConfig";
 import { GoCheckCircle } from "react-icons/go";
 import Swal from "sweetalert2";
 import { useUserInfoContext } from "../../context/UserProvider";
+import AddReviewModal from "../AddReviewModal";
+import Loader from "../Loader";
 
 export function Orders() {
   const [orders, setOrders] = useState("");
   const [isDelivered, setIsDelivered] = useState({});
   const { currentUser } = useUserInfoContext();
-  // const [isFoundedAddress, setIsFoundedAddress] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [userShipping, setUserShipping] = useState([]);
-
-  console.log(currentUser);
+  const [isReview, setIsReview] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -22,7 +24,6 @@ export function Orders() {
           await axiosInstance.get("/api/v1/fur/orders/getordersproducts")
         ).data;
         if (res) {
-          console.log(res);
           setOrders(res);
           const shippingDetails = res.map((order) => ({
             orderId: order._id,
@@ -41,30 +42,6 @@ export function Orders() {
     };
     fetchOrders();
   }, []);
-
-  // useEffect(() => {
-  //   const fetchShippingAddress = async () => {
-  //     try {
-  //       const res = await axiosInstance.get(
-  //         "/api/v1/fur/shippingAddress/getShippingAddress"
-  //       );
-  //       if (res.data) {
-  //         // setIsFoundedAddress(true);
-  //         setUserShipping({
-  //           company: res.data.company,
-  //           houseNumber: res.data.streetAddress.houseNumber,
-  //           apartment: res.data.streetAddress.apartment,
-  //           city: res.data.city,
-  //           state: res.data.state,
-  //           PINCode: res.data.PINCode,
-  //         });
-  //       }
-  //     } catch (error) {
-  //       toast.error(error);
-  //     }
-  //   };
-  //   fetchShippingAddress();
-  // }, []);
 
   const handleClickDelivered = async (e, orderId, productId, color) => {
     const confirmed = await Swal.fire({
@@ -100,6 +77,14 @@ export function Orders() {
     }
   };
 
+  /// review function
+  const handleAddReview = (productId, workshop_id) => {
+    console.log("product", productId, "workshop", workshop_id);
+    setIsModalOpen(true);
+  };
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <div>
       {orders.length === 0 ? (
@@ -122,47 +107,49 @@ export function Orders() {
                   {/* Order Header */}
                   <div className="flex justify-between items-center mb-4 text-white">
                     <div className="text-2xl font-semibold">
-                      Order {order._id}
+                      Order {order._id.slice(-5)}
                     </div>
                     <div className="text-white text-xl font-semibold">
                       Total: {order.total} EGP
                     </div>
                   </div>
-                  {order.products.map((product, index) => {
-                    const productKey = `${order._id}-${product.productId._id}-${product.color}`;
+                  {order.products?.map((product, index) => {
+                    const productKey = `${order?._id}-${product.productId?._id}-${product.color}`;
                     return (
                       <div
-                        key={`${order._id}-${product.productId._id}-${index}`}
-                        className="bg-white rounded-lg shadow-lg p-6 mb-4"
+                        key={`${order._id}-${product.productId?._id}-${index}`}
+                        className="relative bg-white rounded-lg shadow-lg p-6 mb-4"
                       >
                         <div className="grid grid-cols-12 gap-4 mb-2">
                           {/* Order Item Details */}
-                          <div className="flex pb-4 mb-4 col-span-6">
-                            <img
-                              className="w-20 h-20 object-cover mr-6"
-                              src={product.productId.images[0]}
-                              alt="Product"
-                            />
-                            <div className="flex-1">
-                              <div className="text-lg font-semibold pr-3">
-                                {product.productId.name}
+                          <div className="flex items-center col-span-12 lg:col-span-6 mb-4">
+                            <div className="w-1/3 lg:w-1/4">
+                              <img
+                                className="w-full h-full object-cover"
+                                src={product.productId?.images[0]}
+                                alt="Product"
+                              />
+                            </div>
+                            <div className="flex-1 mt-0 ml-4">
+                              <div className="text-lg font-semibold">
+                                {product.productId?.name}
                               </div>
                               <div className="text-gray-500">
-                                {product.productId.price} EGP
+                                {product.productId?.price} EGP
                               </div>
                               <div className="text-gray-500">
-                                Color: {product.color}
+                                Color: {product?.color}
                               </div>
                               <div className="text-gray-500">
-                                Quantity: {product.quantity}
+                                Quantity: {product?.quantity}
                               </div>
                             </div>
                           </div>
 
-                          {/* Delivery and Shipping Info */}
-                          <div className="col-span-3">
+                          {/* Shipping Address */}
+                          <div className="col-span-6 lg:col-span-3">
                             <div className="font-semibold mb-2">
-                              Shipping address
+                              Shipping Address
                             </div>
                             <div>{currentUser.address}</div>
                             <div>{userShipping[indexOrder]?.city}</div>
@@ -171,96 +158,136 @@ export function Orders() {
                               {userShipping[indexOrder]?.apartment}
                             </div>
                           </div>
-                          <div className="col-span-3">
+
+                          {/* Shipping Updates */}
+                          <div className="col-span-6 lg:col-span-3">
                             <div className="font-semibold mb-2">
-                              Shipping updates
+                              Shipping Updates
                             </div>
                             <div>{currentUser.email}</div>
                             <div>{currentUser.phone}</div>
-                            <Link
-                              href="#"
-                              className="text-blue-500 hover:underline"
-                            >
-                              Edit
-                            </Link>
                           </div>
                         </div>
 
-                        {/* Progress Bar */}
-                        <div className="border-t pt-3">
-                          <div className="flex justify-between items-center">
-                            <div className="text-gray-600 mb-2">
-                              Preparing to ship on September 24, 2024
+                        {product.deliveryStatus !== "Cancelled" ? (
+                          <>
+                            {" "}
+                            {/* Progress Bar */}
+                            <div className="border-t pt-3">
+                              <div className="flex justify-between items-center">
+                                <div className={`text-gray-600 mb-2`}>
+                                  {/* Preparing to ship on September 24, 2024 */}
+                                </div>
+                                {product.deliveryStatus === "Shipped" && (
+                                  <GoCheckCircle
+                                    onClick={(e) => {
+                                      if (!isDelivered[productKey])
+                                        handleClickDelivered(
+                                          e,
+                                          order?._id,
+                                          product.productId?._id,
+                                          product?.color
+                                        );
+                                    }}
+                                    className={`text-2xl ${
+                                      isDelivered[productKey]
+                                        ? "text-white bg-blue-500"
+                                        : "text-blue-500 hover:bg-blue-500 hover:text-white"
+                                    } cursor-pointer rounded-full`}
+                                  />
+                                )}
+                              </div>
+                              <div className="relative w-full bg-gray-200 h-2 rounded-full">
+                                <div
+                                  className="absolute bg-blue-500 h-2 rounded-full duration-500"
+                                  style={{
+                                    width: isDelivered[productKey]
+                                      ? "100%"
+                                      : product.deliveryStatus === "Processing"
+                                      ? "35%"
+                                      : product.deliveryStatus === "Shipped"
+                                      ? "65%"
+                                      : product.deliveryStatus ===
+                                          "Delivered" && "100%",
+                                  }}
+                                ></div>
+                              </div>
+                              <div className="flex justify-between text-sm text-gray-600 mt-2">
+                                <div className={`font-semibold text-blue-600`}>
+                                  Order placed
+                                </div>
+                                <div
+                                  className={`font-semibold ${
+                                    [
+                                      "Processing",
+                                      "Shipped",
+                                      "Delivered",
+                                    ].includes(product.deliveryStatus) &&
+                                    "text-blue-600"
+                                  }`}
+                                >
+                                  Processing
+                                </div>
+                                <div
+                                  className={`font-semibold ${
+                                    ["Shipped", "Delivered"].includes(
+                                      product.deliveryStatus
+                                    ) && "text-blue-600"
+                                  }`}
+                                >
+                                  Shipped
+                                </div>
+                                <div
+                                  className={`font-semibold ${
+                                    (["Delivered"].includes(
+                                      product.deliveryStatus
+                                    ) ||
+                                      isDelivered[productKey]) &&
+                                    "text-blue-600"
+                                  },`}
+                                >
+                                  Delivered
+                                </div>
+                              </div>
                             </div>
-                            {product.deliveryStatus === "Shipped" && (
-                              <GoCheckCircle
-                                onClick={(e) => {
-                                  if (!isDelivered[productKey])
-                                    handleClickDelivered(
-                                      e,
-                                      order._id,
-                                      product.productId._id,
-                                      product.color
-                                    );
-                                }}
-                                className={`text-2xl ${
-                                  isDelivered[productKey]
-                                    ? "text-white bg-blue-500"
-                                    : "text-blue-500 hover:bg-blue-500 hover:text-white"
-                                } cursor-pointer rounded-full`}
-                              />
+                            {(["Delivered"].includes(product.deliveryStatus) ||
+                              isDelivered[productKey]) && (
+                              <button
+                                disabled={isReview || product.isRated}
+                                onClick={(e) =>
+                                  handleAddReview(
+                                    product.productId._id,
+                                    product.productId.workshop_id
+                                  )
+                                }
+                                className={`mt-2 flex ms-auto text-center left-1/2 px-4 py-2 rounded-3xl  text-white ${
+                                  !product.isRated && !isReview
+                                    ? "hover:text-[#C26510] border border-[#C26510]  bg-[#C26510] hover:bg-white duration-500"
+                                    : "bg-[#c2661091] cursor-not-allowed"
+                                }`}
+                              >
+                                {isReview || product.isRated
+                                  ? "Reviewed"
+                                  : "Add Review"}
+                              </button>
                             )}
+                            <AddReviewModal
+                              isOpen={isModalOpen}
+                              onClose={() => setIsModalOpen(false)}
+                              workshop_id={product?.productId?.workshop_id}
+                              productId={product?.productId?._id}
+                              setIsReview={setIsReview}
+                              setIsLoading={setIsLoading}
+                              color={product.color}
+                              orderId={order._id}
+                              isRated={product.isRated}
+                            />
+                          </>
+                        ) : (
+                          <div className="absolute border-4 border-red-500 rounded-lg p-1 top-1/2 -translate-y-1/2 start-1/2 -translate-x-1/2 transform -rotate-12 text-red-500 text-5xl">
+                            Cancelled
                           </div>
-                          <div className="relative w-full bg-gray-200 h-2 rounded-full">
-                            <div
-                              className="absolute bg-blue-500 h-2 rounded-full duration-500"
-                              style={{
-                                width: isDelivered[productKey]
-                                  ? "100%"
-                                  : product.deliveryStatus === "Processing"
-                                  ? "35%"
-                                  : product.deliveryStatus === "Shipped"
-                                  ? "65%"
-                                  : product.deliveryStatus === "Delivered" &&
-                                    "100%",
-                              }}
-                            ></div>
-                          </div>
-                          <div className="flex justify-between text-sm text-gray-600 mt-2">
-                            <div className={`font-semibold text-blue-600`}>
-                              Order placed
-                            </div>
-                            <div
-                              className={`font-semibold ${
-                                ["Processing", "Shipped", "Delivered"].includes(
-                                  product.deliveryStatus
-                                ) && "text-blue-600"
-                              }`}
-                            >
-                              Processing
-                            </div>
-                            <div
-                              className={`font-semibold ${
-                                ["Shipped", "Delivered"].includes(
-                                  product.deliveryStatus
-                                ) && "text-blue-600"
-                              }`}
-                            >
-                              Shipped
-                            </div>
-                            <div
-                              className={`font-semibold ${
-                                (["Delivered"].includes(
-                                  product.deliveryStatus
-                                ) ||
-                                  isDelivered[productKey]) &&
-                                "text-blue-600"
-                              },`}
-                            >
-                              Delivered
-                            </div>
-                          </div>
-                        </div>
+                        )}
                       </div>
                     );
                   })}

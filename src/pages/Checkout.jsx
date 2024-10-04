@@ -1,14 +1,22 @@
 import { useEffect, useState } from "react";
 import { HeaderPages } from "../components/HeaderPages";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import CheckoutForm from "../payment/CheckoutForm";
 import { ShippingAddress } from "../components/Profile components/ShippingAddress";
+import Loader from "../components/Loader";
+import { useSelector } from "react-redux";
 
 function Checkout() {
-  const isOkAddress = false;
+  const translate = useSelector((state) => state.language.translation);
+  // const isOkAddress = false;
+  const location = useLocation();
+  const isCheckoutPage = location.pathname === "/checkout";
+  const isOkAddress = isCheckoutPage ? true : false;
+
   const [userAddress, setUserAdderss] = useState("");
   const [orderData, setOrderData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [prices, setPrices] = useState({
     subTotal: "",
     total: "",
@@ -30,8 +38,10 @@ function Checkout() {
 
   const userShippingAdderss = (data) => {
     setUserAdderss(data);
+  };
+  if (isLoading) {
+    return <Loader />;
   }
-
   return (
     <div>
       <HeaderPages namePage="Checkout" />
@@ -50,7 +60,7 @@ function Checkout() {
         <div className=" container lg:w-[1440px]  mx-auto bg-[#2B2B2B] text-center md:text-start rounded-br-xl rounded-bl-xl relative mb-4">
           <span className="absolute bg-[#019ED5] w-full h-[3px] block"></span>
           <div className="p-6 text-white  flex justify-center md:justify-start items-center gap-2">
-            <span>Got a gift card from a loved one?</span>
+            <span>{translate.Got_gift}</span>
             <Link
               to="#"
               className="text-white hover:text-[--mainColor] transition-colors"
@@ -59,19 +69,22 @@ function Checkout() {
                 toast.success("this feature is not available yet ❤️")
               }
             >
-              Use it here!
+              {translate.Use_it_here}
             </Link>
           </div>
         </div>
 
         <div className="container lg:w-[1440px]  mx-auto text-center md:text-start mt-14 mb-14 px-12 py-10 border border-[#5E5E5E] rounded-2xl">
-        <ShippingAddress check={isOkAddress} sendAddressToCheckout={userShippingAdderss}></ShippingAddress>
+          <ShippingAddress
+            check={isOkAddress}
+            sendAddressToCheckout={userShippingAdderss}
+          ></ShippingAddress>
         </div>
 
         {/* Your order */}
         <div className="container lg:w-[1440px]  mx-auto text-center md:text-start mt-14 mb-14 px-12 py-10 border border-[#5E5E5E] rounded-2xl">
           <div>
-            <h3 className="mb-5 text-2xl text-white">Your order</h3>
+            <h3 className="mb-5 text-2xl text-white">{translate.Your_order}</h3>
             <div className="mb-8">
               <ul className="md:relative px-7 flex md:justify-between justify-center items-center flex-wrap gap-4">
                 {/* <ul className="md:relative px-7 grid grid-cols-10 items-center gap-4"> */}
@@ -98,7 +111,7 @@ function Checkout() {
                         </p>
 
                         <span className="mt-1 block text-[#999999]">
-                          Color: <span>{order.color}</span>
+                          {translate.Color}: <span>{order.color}</span>
                         </span>
                       </div>
                     </li>
@@ -107,19 +120,19 @@ function Checkout() {
             </div>
             <span className="my-4 bg-[--mainColor] w-full h-[1px] block"></span>
             <div className="flex flex-col gap-4 md:gap-0 md:flex-row md:justify-between">
-              <span className="text-white">Subtotal</span>
+              <span className="text-white">{translate.Subtotal}</span>
               <span className="text-white">EGP {subTotal}</span>
             </div>
             <span className="my-4 bg-[--mainColor] w-full h-[1px] block"></span>
 
             <div className="flex flex-col gap-4 md:gap-0 md:flex-row justify-between">
-              <span className="text-white">Shipping</span>
-              <span className="text-white">Free Shipping</span>
+              <span className="text-white">{translate.Shipping}</span>
+              <span className="text-white">{translate.Free_Shipping}</span>
             </div>
             <span className="my-4 bg-[--mainColor] w-full h-[1px] block"></span>
 
             <div className="flex flex-col gap-4 md:gap-0 md:flex-row justify-between">
-              <span className="text-white">Total</span>
+              <span className="text-white">{translate.Total}</span>
               <span className="text-white">EGP {total}</span>
             </div>
 
@@ -128,26 +141,27 @@ function Checkout() {
             <div className="mb-8 bg-[#2B2B2B] text-center md:text-start rounded-br-xl rounded-bl-xl relative">
               <span className="absolute bg-[#019ED5] w-full h-[3px] block"></span>
               <div className="p-8 text-white ">
-                Kindly verify the quantities and prices of the items in your
-                order before completing the payment process.
+                {translate.Kindly_verify}
               </div>
             </div>
             <span className="my-4 bg-[#5E5E5E] w-full h-[1px] block"></span>
 
             {/* تعديل حجم النص */}
             <span className="mt-3 block text-[#999999] text-sm">
-              Your personal data will be used to process your order, support
-              your experience throughout this website, and for other purposes
-              described in our
+              {translate.PhoYour_personalne}
               <Link
                 to="#"
                 className="text-white hover:text-[--mainColor] transition-colors ms-1"
                 style={{ borderBottom: "2px solid white" }}
               >
-                privacy policy
+                {translate.Privacy_Policy}
               </Link>
             </span>
-            <CheckoutForm sendAdderss = {userAddress} />
+            <CheckoutForm
+              sendAdderss={userAddress}
+              setIsLoading={setIsLoading}
+              isLoading={isLoading}
+            />
           </div>
         </div>
       </section>
