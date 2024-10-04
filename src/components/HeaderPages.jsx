@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 export function HeaderPages({ namePage }) {
+    const translate = useSelector((state) => state.language.translation);
+
   return (
     <section className="relative flex w-full h-[300px] md:h-[450px]">
       <div
@@ -19,7 +21,7 @@ export function HeaderPages({ namePage }) {
         <div className="text-center my-4">
           <Link to="/">
             <span className="text-white hover:text-orange-500 duration-500">
-              Home
+              {translate.home}
             </span>
           </Link>
           <span className="text-[#A5A5A5]"> / </span>

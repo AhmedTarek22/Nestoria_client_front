@@ -34,8 +34,11 @@ import axios from "axios";
 import Loader from "../components/Loader";
 import LazyLoadedItem from "../components/LazyLoadedItem";
 import { useSearchContext } from "../context/SearchContext";
+import { useSelector } from "react-redux";
 
 function Home() {
+    const { myLang, translation } = useSelector((state) => state.language);
+  const translate = useSelector((state) => state.language.translation);
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -44,7 +47,9 @@ function Home() {
   const [email, setEmail] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState("");
-  const [categoryName, setCategoryName] = useState("Home Decoration");
+  const [categoryName, setCategoryName] = useState(
+    `${translate.Home_Decoration}`
+  );
   const [collectionList, setCollectionList] = useState([]);
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -59,88 +64,83 @@ function Home() {
     "/images/home/1.jpg",
   ];
   const collectionName = [
-    "Home Decoration",
-    "Office Decoration",
-    "Indoor Decoration",
-    "Outdoor Decoration",
+    `${translate.Home_Decoration}`,
+    `${translate.Office_Decoration}`,
+    `${translate.Indoor_Decoration}`,
+    `${translate.Outdoor_Decoration}`,
   ];
 
   const customerReviews = [
     {
-      name: "John Doe",
-      country: "USA",
-      review:
-        "I was thoroughly impressed with the level of service I received. From start to finish, the team was attentive, professional, and made sure all my needs were met. The product itself is top-notch, with a quality that truly stands out in the market. I highly recommend this company to anyone looking for excellence.",
+      name: `${translate.name1}`,
+      country: `${translate.country1}`,
+      review: `${translate.review1}`,
       image: "/images/home/man1.jpg",
     },
     {
-      name: "Maria Garcia",
-      country: "Spain",
-      review:
-        "My experience with this company was nothing short of amazing. The customer support was always available to answer my questions, and the delivery was faster than I expected. The product exceeded my expectations in every way – from the materials used to the attention to detail in the design. I'll definitely be a returning customer.",
+      name: `${translate.name2}`,
+      country: `${translate.country2}`,
+      review: `${translate.review2}`,
       image: "/images/home/man2.jpg",
     },
     {
-      name: "Liu Wei",
-      country: "China",
-      review:
-        "This was one of the best shopping experiences I've ever had. The website was easy to navigate, the purchasing process was straightforward, and the product arrived in perfect condition. The quality is absolutely phenomenal, and I can tell that this company really cares about its customers. I will recommend it to all my friends and family.",
+      name: `${translate.name3}`,
+      country: `${translate.country3}`,
+      review: `${translate.review3}`,
       image: "/images/home/man3.jpg",
     },
     {
-      name: "Ahmed Ali",
-      country: "Egypt",
-      review:
-        "I cannot speak highly enough about the service I received. The team went above and beyond to ensure I was happy with my purchase. The quality of the product is simply outstanding, and it has become one of my favorite items. I appreciate the dedication to customer satisfaction and will definitely be shopping here again.",
+      name: `${translate.name4}`,
+      country: `${translate.country4}`,
+      review: `${translate.review4}`,
       image: "/images/home/man4.jpg",
     },
     {
-      name: "Sophie Dubois",
-      country: "France",
-      review:
-        "The level of care and attention I received from this company was incredible. Every step of the way, I felt valued as a customer. The product is beautiful, well-made, and exactly what I was looking for. I am so pleased with my purchase and will be recommending this company to everyone I know. A truly five-star experience!",
+      name: `${translate.name5}`,
+      country: `${translate.country5}`,
+      review: `${translate.review5}`,
       image: "/images/home/man5.jpg",
     },
   ];
 
   const sections = [
     {
-      name: "Sofa",
+      name: `${translate.Sofa}`,
       icon: <GiSofa />,
       img: "/images/home/Sofa-Home-1-Section-3-01.jpg",
     },
     {
-      name: "Cabinet",
+      name: `${translate.Cabinet}`,
       icon: <BiCabinet />,
       img: "/images/home/Cabinet-Home-1-Section-3-02.jpg",
     },
     {
-      name: "Shelving Units",
+      name: `${translate.Shelving_Units}`,
       icon: <MdShelves />,
       img: "/images/home/Shelving Units.jpg",
     },
     {
-      name: "Tea Table",
+      name: `${translate.Tea_Table}`,
       icon: <MdTableChart />,
       img: "/images/home/tea table.jpg",
     },
     {
-      name: "Decors",
+      name: `${translate.Decors}`,
       icon: <GiBedLamp />,
       img: "/images/home/decors.jpg",
     },
     {
-      name: "Office Table",
+      name: `${translate.Office_Table}`,
       icon: <HiBuildingOffice2 />,
       img: "/images/home/office table.jpg",
     },
     {
-      name: "Kitchen Furniture",
+      name: `${translate.Kitchen_Furniture}`,
       icon: <GiKitchenScale />,
       img: "/images/home/kitchenfurniture.jpg",
     },
     {
-      name: "Storage Furniture",
+      name: `${translate.Storage_Furniture}`,
       icon: <MdDinnerDining />,
       img: "/images/home/storage furniture.jpg",
     },
@@ -194,21 +194,18 @@ function Home() {
         {homeImgUrls.map((url, index) => {
           return (
             <SwiperSlide key={index}>
-              <div className="sectionOne relative ">
+              <div className="sectionOne relative">
                 <div
                   className={`${styles.text} flex flex-col gap-1 justify-center items-center absolute top-[30%] left-1/2 z-30`}
                 >
                   <p className="text-[--mainColor] hidden md:block">
-                    SMART SOLUTION
+                    {translate.SMART_SOLUTION}
                   </p>
                   <h1 className="text-center text-lg md:text-3xl  lg:text-4xl xl:text-5xl 2xl:text-6xl my-2 md:my-3 lg:my-1 text-[#ffffffdc] ">
-                    Enjoy With Style & Comfort
+                    {translate.Enjoy_With_Style}
                   </h1>
                   <p className="text-[#dddadaf5]   text-center my-1 md:my-2 line-clamp-1 md:line-clamp-2 lg:line-clamp-3">
-                    The price of the product is very low, or the price of the
-                    book. Some like the ferry line from diam concern For the bed
-                    of two valleys. But the price of the sauce is the price of
-                    the bed how much does it matter to the pellentesque tortor
+                    {translate.The_price_product_section1}
                   </p>
                   <button
                     onClick={() => {
@@ -216,7 +213,7 @@ function Home() {
                     }}
                     className={`${styles.shopNowBtn} relative bg-[--mainColor] text-[white] py-1 lg:py-2 px-7 rounded-3xl text-sm md:text-lg lg:text-xl mt-2`}
                   >
-                    <span className="pr-8"> Shop Now</span>
+                    <span className="pr-8">{translate.Shop_Now}</span>
                     <span className=" absolute top-1/2 translate-y-[-50%] right-1 bg-white p-[1px] lg:p-[7px] rounded-full flex justify-center items-center  text-black">
                       <IoIosArrowRoundForward className="text-2xl arrow" />
                     </span>
@@ -228,20 +225,17 @@ function Home() {
           );
         })}
       </Swiper>
+
       {/* section two */}
       <div className="w-full bg-[#101010]  py-[120px]">
         <div className="homeHub flex flex-col md:flex-row  container lg:w-[1440px] mx-auto gap-4 py-20 my-[40px] px-[15px]">
           <div className="first flex-1">
-            <p className="text-[--mainColor]">Home Decor Hub</p>
+            <p className="text-[--mainColor]">{translate.Home_Decor_Hub}</p>
             <h2 className="text-xl md:text-2xl lg:text-4xl text-white">
-              Exceptional Furniture's For Indoor & Outdoor
+              {translate.Exceptional_Furniture}
             </h2>
             <p className="my-4 line-clamp-4 text-[#dfddddd2] ">
-              As eleifend mattis ligula, the door is loaded with urns at the
-              borders. Aeneas vehicles do not belong to members of the arc. The
-              whole protein and the price is flattering. The class is suitable
-              for the silent partners who turn to the shores through our
-              marriages, through the Hymenaean projects.
+              {translate.eleifend_p}
             </p>
             <LazyLoadedItem x="-100">
               <img alt="example" src="/images/home/first.jpg" />
@@ -253,29 +247,21 @@ function Home() {
             </LazyLoadedItem>
 
             <h2 className="text-xl md:text-2xl lg:text-4xl text-white mt-4">
-              Discover Endless Designs
+              {translate.Discover_Endless_Designs}
             </h2>
             <div className="my-6 line-clamp-4 text-[#dfddddd2] ">
-              Integer dapibus ac dui pretium blandit. Class aptent taciti
-              sociosqu ad litora torquent per conubia nostra, per inceptos
-              himenaeos. Ut eleifend mattis ligula, porta finibus urna gravida
-              at. Aenean vehicula sodales arcu non mattis.
+              {translate.Crafting_h2}
               <div className="tip flex justify-start mt-2 items-center gap-2">
                 <GiCheckMark className="text-[--mainColor]" />
-                <span>
-                  But the eleifend of the estate, the gate of the border, the
-                  urn led at.
-                </span>
+                <span>{translate.But_span}</span>
               </div>
               <div className="tip flex justify-start mt-2 items-center gap-2">
                 <GiCheckMark className="text-[--mainColor]" />
-                <span>Ginteger proteins and dui are suitable for blanss.</span>
+                <span>{translate.Ginteger_span}</span>
               </div>
               <div className="tip flex justify-start mt-2 items-center gap-2">
                 <GiCheckMark className="text-[--mainColor]" />
-                <span>
-                  Kenean vehicles are not owned by members of the arc.
-                </span>
+                <span>{translate.IsConfirm_span}</span>
               </div>
             </div>
           </div>
@@ -316,9 +302,9 @@ function Home() {
       {/* Collection */}
       <div className="w-full bg-[#2c2c2c]  py-[120px]">
         <div className="container lg:w-[1440px] mx-auto flex flex-col justify-center items-center my-10">
-          <p className="text-[--mainColor]">EXPLORE OUR</p>
+          <p className="text-[--mainColor]">{translate.EXPLORE_OUR}</p>
           <h2 className="text-2xl md:text-4xl lg:text-6xl text-white">
-            Luxurious Haven Collection
+            {translate.Luxurious_Haven}
           </h2>
           <div className="collectionsName my-8 flex justify-center items-center px-3">
             <ul className="flex justify-center items-center gap-4 text-white">
@@ -342,6 +328,7 @@ function Home() {
           {isLoading ? (
             <Loader />
           ) : (
+            // <h2>loader</h2>
             <div className="boxs grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mx-auto px-3">
               {collectionList.map((product) => {
                 return (
@@ -362,7 +349,7 @@ function Home() {
                         </div>
                       </Link>
                       <span className="absolute top-3 right-2 text-white bg-[--mainColor] p-1 text-xs rounded">
-                        ON SALE
+                        {translate.ON_SALE}
                       </span>
                     </div>
                     <div className="text-center">
@@ -370,7 +357,7 @@ function Home() {
                         {product.category}
                       </p>
                       <h2 className="text-white text-md md:text-xl lg:text-2xl font-semibold">
-                        {product.name}
+                        {myLang === "ar" ? product.nameInArabic : product.name}
                       </h2>
                       <p className="flex justify-center items-center text-white my-2">
                         <LuIndianRupee />
@@ -393,16 +380,16 @@ function Home() {
           className={`${styles.headeranimation} z-30 text-white flex items-center gap-10 py-3 text-xl`}
         >
           <span>
-            Tailored Furniture For Specific Needs.
+            {translate.Tailored_Furniture}
             <span>
               <FaArrowsToDot className="inline" />
             </span>
           </span>
-          <span>Ensure Durability And Longevity.</span>
+          <span>{translate.Ensure_Durability}</span>
           <span>
             <FaArrowsToDot className="inline" />
           </span>
-          <span>Diverse Range Of Furniture's.</span>
+          <span>{translate.Diverse_Range}.</span>
           <span>
             <FaArrowsToDot className="inline" />
           </span>
@@ -411,15 +398,15 @@ function Home() {
           className={`${styles.headeranimation2} z-30 text-white flex items-center gap-10 py-3 text-xl`}
         >
           {" "}
-          <span>Comfort And High Functionality.</span>
+          <span>{translate.Comfort_And_High}.</span>
           <span>
             <FaArrowsToDot className="inline" />
           </span>
-          <span>Tailored Furniture For Specific Needs.</span>
+          <span>{translate.Tailored_Furniture}.</span>
           <span>
             <FaArrowsToDot className="inline" />
           </span>
-          <span>Ensure Durability And Longevity.</span>
+          <span>{translate.Ensure_Durability}.</span>
           <span>
             <FaArrowsToDot className="inline" />
           </span>
@@ -430,9 +417,11 @@ function Home() {
       <div className="w-full bg-[#2c2c2c]  py-[120px] min-h-[875px]">
         <div className="container lg:w-[1440px] flex justify-center items-center mx-auto gap-4 flex-col lg:flex-row ">
           <div className="flex-1 px-3 max-h-[625px] overflow-hidden">
-            <p className="text-[--mainColor]">Product related queries</p>
+            <p className="text-[--mainColor]">
+              {translate.Product_related_queries}
+            </p>
             <h2 className="text-2xl md:text-3xl lg:text-6xl text-white my-5">
-              Products & Service
+              {translate.Products_Service}
             </h2>
             <Accordion
               expanded={expanded === "panel1"}
@@ -449,16 +438,12 @@ function Home() {
                   sx={{ color: "white" }}
                   className="hover:text-[--mainColor]"
                 >
-                  For furniture purchases, do you have financing options?
+                  {translate.For_furniture_purchases}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ background: "#2c2c2c" }}>
                 <Typography className="text-[#dddcdccc] max-w-[80%]">
-                  Pain should be followed by coaching. Elit duis sad
-                  sollicitudin nibh is important. Utrice eros in the course of
-                  the high school. Ultricies sad no aquet for the tortor at the
-                  auctor urn now. Consectetur adipiscing elit duis trisque
-                  sollicitudin nibh sit amet.{" "}
+                  {translate.Pain_should}.{" "}
                 </Typography>
               </AccordionDetails>
             </Accordion>
@@ -477,16 +462,12 @@ function Home() {
                   sx={{ color: "white" }}
                   className="hover:text-[--mainColor]"
                 >
-                  Do you have eco-friendly furniture?
+                  {translate.have_eco_friendly}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ background: "#2c2c2c" }}>
                 <Typography className="text-[#dddcdccc] max-w-[80%]">
-                  I need the wisdom of God. What a caricature of a doctor who
-                  hates football. Everyone needs to drink and not need to do
-                  their homework. It's a great airline for kids. Aliquet lectus
-                  proin nibh nisl condimentum id. Ridiculous mus mauris vitae
-                  ultricies leo integer.
+                  {translate.I_need_the_wisdom}.
                 </Typography>
               </AccordionDetails>
             </Accordion>
@@ -505,17 +486,12 @@ function Home() {
                   sx={{ color: "white" }}
                   className="hover:text-[--mainColor]"
                 >
-                  Is it possible to follow the delivery of my furniture?
+                  {translate.Is_it_possible}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ background: "#2c2c2c" }}>
                 <Typography className="text-[#dddcdccc] max-w-[80%]">
-                  The yeast of the god's throat in the ornament than the cartoon
-                  of the doctor with football arrows. I want to decorate the
-                  bed. Morbi, the urn of the employee, but the element of
-                  football is easy. Everyone doesn't want to drink or do their
-                  homework. I don't hate euismod lacinia at quis risus sed
-                  vulputate odio.
+                  {translate.The_yeast_of_the_god}
                 </Typography>
               </AccordionDetails>
             </Accordion>
@@ -534,17 +510,12 @@ function Home() {
                   sx={{ color: "white" }}
                   className="hover:text-[--mainColor]"
                 >
-                  Do you offer design consultations?
+                  {translate.BalDo_you_offer}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ background: "#2c2c2c" }}>
                 <Typography className="text-[#dddcdccc] max-w-[80%]">
-                  For the pure does not present an element that is easy or
-                  natural. Pharetra diam should be a lot of fans. The mountains,
-                  pregnant with their partners and born, will give birth to
-                  feathers and great thrusts. The price of the product itself is
-                  insignificant, or the price of the bed that adorns the pure
-                  palate.
+                  {translate.For_the_pure_does}.
                 </Typography>
               </AccordionDetails>
             </Accordion>
@@ -563,16 +534,12 @@ function Home() {
                   sx={{ color: "white" }}
                   className="hover:text-[--mainColor]"
                 >
-                  Are custom orders accepted for furniture that isn't in stock?
+                  {translate.Are_custom_orders}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails sx={{ background: "#2c2c2c" }}>
                 <Typography className="text-[#dddcdccc] max-w-[80%]">
-                  It is said that everyone who lived in this street is free from
-                  arrows. It is said that it is sad and urgent that someone
-                  himself suspended the basketball. Ultricies lake but ugly
-                  tincidunt id aquiet risus feugiat. Maecenas was flattered by
-                  some of the chocolates he wanted.
+                  {translate.It_is_said_that}
                 </Typography>
               </AccordionDetails>
             </Accordion>
@@ -596,15 +563,13 @@ function Home() {
         <div className="container lg:w-[1440px] mx-auto my-10 px-3">
           <div className="flex justify-between items-center">
             <div className="flex-1">
-              <p className="text-[--mainColor]">Sleek And Stylish</p>
+              <p className="text-[--mainColor]">{translate.Sleek_And_Stylish}</p>
               <h2 className="text-2xl md:text-3xl lg:text-6xl text-white my-5">
-                Innovative Furniture's
+                {translate.Innovative_Furniture}
               </h2>
             </div>
             <div className="info text-[#d6d5d5d8] w-[40%] line-clamp-3">
-              The class is silent. As eleifend mattis ligula, the door is loaded
-              with urns at the borders. Aeneas do not own the vehicles of the
-              bow. The whole protein and the price is flattering.
+              {translate.The_class}.
             </div>
           </div>
           <div className="imgContainer !mt-[20px] md:!mt-[55px] relative">
@@ -640,9 +605,9 @@ function Home() {
       <div className="w-full bg-[#313030]  py-[120px]">
         <div className="container lg-w-[1440px] mx-auto">
           <div className="text text-center ">
-            <p className="text-[--mainColor]">Testimonial Time</p>
+            <p className="text-[--mainColor]">{translate.Testimonial_Time}</p>
             <h2 className="text-2xl md:text-3xl lg:text-6xl text-white my-5">
-              Our Customers Speak
+              {translate.Our_Customers_Speak}
             </h2>
             <div className="rating flex justify-center items-center mt-8 gap-2">
               <FaStar className="text-[--mainColor]" />
@@ -695,9 +660,9 @@ function Home() {
       {/* blog */}
       <div className="w-full bg-[#131313]  py-[120px]">
         <div className="container lg:w-[1440px] mx-auto my-10 px-3">
-          <p className="text-[--mainColor]">Get the Latest News</p>
+          <p className="text-[--mainColor]">{translate.Get_the_Latest_News}</p>
           <h2 className="text-2xl md:text-3xl lg:text-6xl text-white my-5">
-            Visit Our Blog
+            {translate.The_Modest_Living}
           </h2>
           <div className="flex justify-center items-center gap-5 flex-col lg:flex-row">
             <div className="right flex-1">
@@ -720,14 +685,10 @@ function Home() {
                 </span>
               </p>
               <h2 className="text-xl md:text-3xl text-white hover:text-[--mainColor] cursor-pointer transition-all duration-200">
-                The Modest Living Space Furnishings Ideas
+                {translate.The_Modest_Living}
               </h2>
               <p className="text-[#d4d2d2bb] line-clamp-2 w-[70%] my-3">
-                Explore the best solutions for refreshing your home with our
-                diverse range of furniture articles. We offer tips and
-                inspiration to transform your living spaces into stylish and
-                comfortable environments that reflect your personal taste, from
-                selecting the right furniture to coordinating colors and decor.
+                {translate.Bala_Explore_the_best}
               </p>
             </div>
             <div className="left flex-1 ">
@@ -744,14 +705,10 @@ function Home() {
                 <div className="info flex-1">
                   <p className="date text-[--mainColor]">May 27, 2024</p>
                   <h2 className="mt-3 text-xl md:text-2xl text-white hover:text-[--mainColor] cursor-pointer transition-all duration-500">
-                    Tips For Designing Reading Area Space Smartly
+                    {translate.Tips_For_Designing}
                   </h2>
                   <p className="text-[#d4d2d2bb] line-clamp-2 w-[70%] my-3">
-                    Struggling with limited space? Watch this video to explore
-                    smart furniture solutions designed to maximize functionality
-                    and style in small homes. From multi-purpose pieces to
-                    clever storage solutions, you'll find inspiration for making
-                    the most of your compact living area.
+                    {translate.Struggling_with_limited}.
                   </p>
                 </div>
               </div>
@@ -768,14 +725,10 @@ function Home() {
                 <div className="info flex-1">
                   <p className="date text-[--mainColor]">May 26, 2024</p>
                   <h2 className="mt-3 text-xl md:text-2xl text-white hover:text-[--mainColor] cursor-pointer transition-all duration-500">
-                    Easy Way To Furnish Your Home Affordably
+                    {translate.Easy_Way}
                   </h2>
                   <p className="text-[#d4d2d2bb] line-clamp-2 w-[70%] my-3">
-                    Transform your bedroom into a relaxing oasis with our
-                    essential furniture and decor tips. This video guides you
-                    through selecting the right furniture and accessories to
-                    create a serene and inviting retreat, perfect for unwinding
-                    after a long day.
+                    {translate.ransform_your_bedroom}.
                   </p>
                 </div>
               </div>
@@ -792,14 +745,10 @@ function Home() {
                 <div className="info flex-1">
                   <p className="date text-[--mainColor]">May 25, 2024</p>
                   <h2 className="mt-3 text-xl md:text-2xl text-white hover:text-[--mainColor] cursor-pointer transition-all duration-500">
-                    Minimalist Modern Modular Kitchen Design
+                    {translate.Minimalist_Modern}
                   </h2>
                   <p className="text-[#d4d2d2bb] line-clamp-2 w-[70%] my-3">
-                    Discover innovative ways to elevate your living room with
-                    our stylish furniture ideas. This video showcases the latest
-                    trends and design tips for selecting the perfect pieces to
-                    create a cozy and modern living space that reflects your
-                    personal style.
+                    {translate.Discover_innovative}.
                   </p>
                 </div>
               </div>
@@ -819,10 +768,10 @@ function Home() {
           <div className="text text-center mx-auto absolute z-20 top-1/2 left-1/2 transform translate-x-[-50%]  translate-y-[-50%]">
             <p className="text-[--mainColor] ">Art Of Comfort</p>
             <h2 className="text-xl md:text-3xl lg:text-6xl text-white my-2 md:my-5 ">
-              Transforming Spaces,
+              {translate.Transforming_Spaces},
             </h2>
             <h2 className="text-2xl md:text-3xl lg:text-6xl text-white my-2 md:my-5 hidden md:block">
-              Transforming Style
+              {translate.Transforming_Style}
             </h2>
             <form className="relative w-[80%] mx-auto" onSubmit={handleSubmit}>
               <input
@@ -856,7 +805,7 @@ function Home() {
                 >
                   Your email is safe with us, we don't spam.
                   <Link href="/privacy-policy" className="underline text-white">
-                    Privacy Policy
+                    {translate.Privacy_Policy}
                   </Link>
                 </label>
               </div>

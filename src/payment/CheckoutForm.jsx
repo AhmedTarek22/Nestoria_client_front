@@ -12,7 +12,6 @@ import Loader from "../components/Loader";
 import { useNavigate } from "react-router-dom";
 
 const CheckoutForm = (props) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [orderData, setOrderData] = useState(null);
   const [prices, setPrices] = useState({
     subTotal: "",
@@ -31,7 +30,6 @@ const CheckoutForm = (props) => {
         subTotal: parsedData.subTotal,
         total: parsedData.total,
       });
-      console.log("total", total, "subTotal", subTotal);
     } else {
       navigate("/cart");
     }
@@ -40,11 +38,11 @@ const CheckoutForm = (props) => {
   const stripe = useStripe();
   const elements = useElements();
   const [paymentStatus, setPaymentStatus] = useState("");
-
   const navigate = useNavigate();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if(!props.sendAdderss){
+    if (!props.sendAdderss) {
       return toast.error("Confirm shipping address");
     }
     if (!stripe || !elements) {
@@ -52,85 +50,90 @@ const CheckoutForm = (props) => {
     }
 
     const card = elements.getElement(CardElement);
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: "card",
-      card,
-    });
+    const { error: paymentMethodError, paymentMethod } =
+      await stripe.createPaymentMethod({
+        type: "card",
+        card,
+      });
 
-    if (error) {
+    if (paymentMethodError) {
       setPaymentStatus("Payment failed");
       return;
     }
 
-    setIsLoading(true);
-    // Send payment information to server
-    const intentResponse = await axiosInstance.post(
-      "/api/payment/create-payment-intent",
-      {
-        amount: 50,
-      }
-    );
-    const { clientSecret, paymentIntentId } = intentResponse.data;
-    const response = await axiosInstance.post(
-      "/api/payment/create-payment-intent",
-      { amount: total },
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
+    props.setIsLoading(true);
 
-    const { error: confirmError } = await stripe.confirmCardPayment(
-      clientSecret,
-      {
-        payment_method: paymentMethod.id,
-      }
-    );
+    try {
+      // Step 1: Verify product stock before creating the payment intent
+      const products = orderData.products.map((order) => ({
+        productId: order.productId._id,
+        workshopId: order.productId.workshop_id,
+        quantity: order.quantity,
+        price: order.subTotal,
+        color: order.color,
+      }));
 
-    if (confirmError) {
+      const stockResponse = await axiosInstance.post(
+        "/api/v1/fur/orders/verify-stock",
+
+        { products }
+      );
+
+      if (stockResponse.data.adjusted) {
+        // If stock was adjusted, notify the user and reload the cart
+        navigate("/cart");
+        toast.error(
+          "Some products have insufficient stock. we reduce the quantity for you."
+        );
+        props.reloadCart();
+        return;
+      }
+
+      // Step 2: Create the payment intent after verifying stock
+      const response = await axiosInstance.post(
+        "/api/payment/create-payment-intent",
+        { amount: total }
+      );
+      const { clientSecret, paymentIntentId } = response.data;
+
+      // Step 3: Confirm the payment with Stripe
+      const { error: confirmError } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: paymentMethod.id,
+        }
+      );
+
+      if (confirmError) {
+        setPaymentStatus("Payment failed");
+        navigate("/paymentfailure");
+        toast.error("Sorry, payment failed");
+      } else {
+        // Step 4: Submit the order after successful payment
+        await axiosInstance.post("/api/v1/fur/orders/addneworders", {
+          products,
+          total,
+          paymentIntentId,
+          status: "paid",
+          shippingAddress: props.sendAdderss,
+        });
+
+        setPaymentStatus("Payment successful");
+        navigate("/paymentsuccess");
+        localStorage.removeItem("ordersLocal");
+        toast.success("Great, payment successful 🎉");
+      }
+    } catch (error) {
+      console.error("Error handling payment:", error);
       setPaymentStatus("Payment failed");
-      navigate("/paymentfailure");
-      setIsLoading(false);
-      toast.error("sorry, payment failed");
-    } else {
-      const products = orderData.products.map((order) => {
-        return {
-          productId: order.productId._id,
-          //   FIXME: CHECK WORKSHOP_ID
-          workshopId: order.productId.workshop_id,
-          quantity: order.quantity,
-          price: order.subTotal,
-          color: order.color,
-        };
-      });
-
-      const req = await axiosInstance.post("/api/v1/fur/orders/addneworders", {
-        products: products,
-        total: total,
-        paymentIntentId: paymentIntentId,
-        status: "paid",
-        shippingAddress: {
-          houseNumber: props.sendAdderss.houseNumber,
-          apartment: props.sendAdderss.apartment,
-          city: props.sendAdderss.city,
-          state: props.sendAdderss.state,
-        },
-      });
-
-      setPaymentStatus("Payment successfully");
-      navigate("/paymentsuccess");
-      localStorage.removeItem("ordersLocal");
-      setIsLoading(false);
-      toast.success("Great, payment successfully🎉");
-      console.log("successfully payment");
+      toast.error("Sorry, payment failed");
+    } finally {
+      props.setIsLoading(false);
     }
   };
 
   return (
-    <div
-      className="flex justify-start items-center mt-5 w-full"
-      //   style={{ backgroundImage: "url('/images/home/2.jpg')" }}
-    >
-      {isLoading && <Loader />}
+    <div className="flex justify-start items-center mt-5 w-full">
       <form
         onSubmit={handleSubmit}
         className=" border border-[#9b9b9bc7] text-white p-6 rounded-lg shadow-lg w-full "

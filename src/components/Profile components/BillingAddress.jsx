@@ -81,7 +81,7 @@ export function BillingAddress() {
           className="bg-transparent py-4 px-8 rounded-full border border-[#929292] focus:border-[#C26510] focus:outline-none duration-500"
           type="text"
           name=""
-          placeholder="Apartment, suite, unit, etc, (optional)"
+          placeholder="Apartment, suite, unit, etc"
         />
       </div>
       <div className="flex flex-col gap-4 text-[#929292]">

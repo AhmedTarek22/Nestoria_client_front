@@ -1,6 +1,9 @@
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 function IntroSection({ pageTitle, pageName }) {
+    const translate = useSelector((state) => state.language.translation);
+
   return (
     <div className="relative text-center ">
       <img
@@ -18,7 +21,7 @@ function IntroSection({ pageTitle, pageName }) {
           <div className="text-center my-4">
             <Link to="/">
               <span className="text-white hover:text-orange-500 duration-500 text-base sm:text-lg md:text-xl lg:text-2xl">
-                Home
+                {translate.home}
               </span>
             </Link>
             <span className="text-[#A5A5A5] mx-2"> / </span>

@@ -4,8 +4,10 @@ import Modal from "react-responsive-modal";
 import "react-responsive-modal/styles.css";
 import ModalImage from "react-modal-image";
 import Swal from "sweetalert2";
+import { useSelector } from "react-redux";
 
 function WorkshopRequests() {
+  const translate = useSelector((state) => state.language.translation);
   const [requests, setRequests] = useState([]);
   const [total, setTotal] = useState(0);
   const [selectedWorkshop, setSelectedWorkshop] = useState(null);
@@ -111,7 +113,7 @@ function WorkshopRequests() {
     <>
       <section id="requests" className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4 w-full text-center">
-          Workshop Requests <span>{total}</span>
+          {translate.Workshop_Requests} <span>{total}</span>
         </h2>
         <div className="bg-white shadow-md rounded-lg p-6">
           {requests.map((request) => (
@@ -121,14 +123,14 @@ function WorkshopRequests() {
             >
               <div>
                 <p className="text-gray-800">
-                  <span className="font-bold">Workshop Name: </span>
+                  <span className="font-bold">{translate.Workshop_Name}: </span>
                   {request.name}
                 </p>
                 <p className="text-gray-600">
-                  <span className="font-bold">Email:</span> {request.email}
+                  <span className="font-bold">{translate.Email}:</span> {request.email}
                 </p>
                 <p className="text-gray-600">
-                  <span className="font-bold">Join At:</span>{" "}
+                  <span className="font-bold">{translate.Join_At}:</span>{" "}
                   {request.updatedAt.split("T")[0]}
                 </p>
               </div>
@@ -137,19 +139,19 @@ function WorkshopRequests() {
                   className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
                   onClick={() => showDetails(request)}
                 >
-                  Show Details
+                  {translate.Show_Details}
                 </button>
                 <button
                   onClick={() => handleAcceptance(request.name, request.email)}
                   className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
                 >
-                  Approve
+                  {translate.Approve}
                 </button>
                 <button
                   className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                   onClick={() => handleReject(request.name, request.email)}
                 >
-                  Reject
+                  {translate.Reject}
                 </button>
               </div>
             </div>
@@ -161,7 +163,7 @@ function WorkshopRequests() {
       {isModalOpen && (
         <Modal open={isModalOpen} onClose={closeModal} center>
           <h3 className="text-xl font-bold mb-4 text-center">
-            Workshop Profile Details
+            {translate.Workshop_Profile_Details}
           </h3>
           {selectedWorkshop && (
             <div>
@@ -175,16 +177,16 @@ function WorkshopRequests() {
               </p>
               <div className="flex justify-around gap-2 mt-5">
                 <p className="text-xl">
-                  <strong>Workshop Name:</strong> {selectedWorkshop.name}
+                  <strong>{translate.Workshop_Name}:</strong> {selectedWorkshop.name}
                 </p>
                 <p className="text-xl">
-                  <strong>Address:</strong> {selectedWorkshop.address}
+                  <strong>{translate.Address}:</strong> {selectedWorkshop.address}
                 </p>
               </div>
 
               <div className="flex justify-between gap-6 mt-5">
                 <div className="w-1/2 flex-1">
-                  <strong>Front ID:</strong>
+                  <strong>{translate.Front_ID}:</strong>
                   <ModalImage
                     small={
                       selectedWorkshop.registrationDocuments.nationalIDFront
@@ -196,7 +198,7 @@ function WorkshopRequests() {
                   />
                 </div>
                 <div className="w-1/2 flex-1">
-                  <strong>Back ID:</strong>
+                  <strong>{translate.Back_ID}:</strong>
                   <ModalImage
                     small={
                       selectedWorkshop.registrationDocuments.nationalIDBack
@@ -210,7 +212,7 @@ function WorkshopRequests() {
               </div>
               <div className="flex gap-5">
                 <p className="mt-6 w-1/2 ">
-                  <strong>Bank Statement:</strong>{" "}
+                  <strong>{translate.Bank_Statement}:</strong>{" "}
                   <ModalImage
                     small={selectedWorkshop.registrationDocuments.bankStatement}
                     large={selectedWorkshop.registrationDocuments.bankStatement}
@@ -218,7 +220,7 @@ function WorkshopRequests() {
                   />
                 </p>
                 <p className="mt-6 w-1/2 ">
-                  <strong>Tax Registration:</strong>{" "}
+                  <strong>{translate.Tax_Registration}:</strong>{" "}
                   <ModalImage
                     small={
                       selectedWorkshop.registrationDocuments.commercialRecord

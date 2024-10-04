@@ -11,8 +11,13 @@ import { toast, ToastContainer } from "react-toastify";
 import Swal from "sweetalert2";
 import axiosInstance from "../apis/axiosConfig";
 import "react-toastify/dist/ReactToastify.css";
+import ColorNamer from "color-namer";
+import { useSelector } from "react-redux";
 
 function WishlistPage() {
+  const { myLang, translation } = useSelector((state) => state.language);
+
+  const translate = useSelector((state) => state.language.translation);
   const [wishlist, setWishlist] = useState([]);
   const navigate = useNavigate();
 
@@ -61,9 +66,20 @@ function WishlistPage() {
     });
   };
 
-  const addToCart = async (quantity, productId, color) => {
+  const addToCart = async (quantity = 1, productId, colors) => {
+    const colorNames = colors.map((color) => {
+      const colorName = ColorNamer(color);
+      return colorName.ntc[0].name;
+    });
+    console.log("colorName", colorNames[0]);
+    console.log("colorNames", colorNames);
+    const color = colorNames[0];
     try {
-      await axiosInstance.post("/addToCart", { quantity, productId, color });
+      await axiosInstance.post("/addToCart", {
+        quantity,
+        productId,
+        color,
+      });
       Swal.fire({
         title: "Success!",
         text: "Product added to cart!",
@@ -86,7 +102,7 @@ function WishlistPage() {
   return (
     <div>
       <ToastContainer />
-      <HeaderPages namePage="Wishlist" />
+      <HeaderPages namePage={`${translate.wishlist}`} />
       <section
         style={{
           backgroundImage: "url('/body-bg.png')",
@@ -104,7 +120,7 @@ function WishlistPage() {
             className="text-5xl text-[--mainColor] border-2 border-[--mainColor] p-4 rounded-full"
           />
           <h2 className="text-xl md:text-2xl lg:text-4xl text-white">
-            Your Wishlist
+            {translate.Your_Wishlist}
           </h2>
         </div>
         {/* section products empty */}
@@ -113,12 +129,12 @@ function WishlistPage() {
             <div className="bg-[#2B2B2B] text-center md:text-start rounded-br-xl rounded-bl-xl relative">
               <span className="absolute bg-[#019ED5] w-full h-[3px] block"></span>
               <div className="p-6 text-white font-bold">
-                Your Wishlist is currently empty.
+                {translate.Your_Wishlist_div}.
               </div>
             </div>
             <Link to="/shop">
               <button className="mt-10 px-6 py-3 text-[#C26510] border border-[#C26510] rounded-3xl hover:text-white hover:bg-[#C26510] duration-500">
-                Return To Shop
+                {translate.Return_To_Shop}
               </button>
             </Link>
           </div>
@@ -127,8 +143,8 @@ function WishlistPage() {
             {/* products */}
             <div className="mt-10 mb-5 py-5 border border-[#393938] md:border-[#C26510] rounded-2xl">
               <ul className="px-7 hidden md:grid grid-cols-10 items-center text-white">
-                <li className="col-span-4">Product</li>
-                <li className="col-span-2">Price</li>
+                <li className="col-span-4">{translate.Product}</li>
+                <li className="col-span-2">{translate.Price}</li>
               </ul>
               <span className="my-6 bg-[#393938] w-full h-[2px] hidden md:block"></span>
 
@@ -151,7 +167,10 @@ function WishlistPage() {
                       </figure>
                       <div className="text-center md:text-start">
                         <p className="text-xl md:text-base text-white hover:text-[#C26510] duration-500">
-                          {item.product.name}
+                          {myLang === "ar"
+                            ? item.product.nameInArabic
+                            : item.product.name}
+
                         </p>
                       </div>
                     </li>
@@ -168,24 +187,20 @@ function WishlistPage() {
                           }}
                         >
                           <FontAwesomeIcon icon={faTrash} className="mr-2" />{" "}
-                          Remove fom wishlist
+                          {translate.Remove_fom_wishlist}
                         </button>
                         <button
                           className="px-6 py-3 text-[#C26510] border border-[#C26510] rounded-3xl hover:text-white hover:bg-[#C26510] duration-500"
                           onClick={(e) => {
                             e.stopPropagation();
-                            addToCart(
-                              item.product.quantity,
-                              item.product._id,
-                              item.product.details.color
-                            );
+                            addToCart(1, item.product._id, item.product.color);
                           }}
                         >
                           <FontAwesomeIcon
                             icon={faShoppingCart}
                             className="mr-2"
                           />{" "}
-                          Add to Cart
+                          {translate.Add_to_Cart}
                         </button>
                       </div>
                     </li>

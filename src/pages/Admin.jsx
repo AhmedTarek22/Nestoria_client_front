@@ -22,10 +22,13 @@ import AllWorkshops from "../components/AllWorkshops";
 import CustomerComplaints from "../components/CustomerComplaints";
 import axiosInstance from "../apis/axiosConfig";
 import { toast } from "react-toastify";
+import { RiCoupon2Fill } from "react-icons/ri";
+import { Coupon } from "./Coupon";
 function Admin() {
   const [open, setOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("workshop Requests");
   const navigate = useNavigate();
+
   useEffect(() => {
     async function verifyRole() {
       try {
@@ -64,6 +67,9 @@ function Admin() {
       }
       case "All Workshops": {
         return <AllWorkshops />;
+      }
+      case "Coupons": {
+        return <Coupon />;
       }
       case "customer complaints": {
         return <CustomerComplaints />;
@@ -107,6 +113,10 @@ function Admin() {
           {
             text: "All Workshops",
             icon: <EngineeringIcon className="!text-[#464545d0]" />,
+          },
+          {
+            text: "Coupons",
+            icon: <RiCoupon2Fill className="!text-[#464545d0]" />,
           },
         ].map((text, index) => (
           <ListItem key={text.text} disablePadding>
