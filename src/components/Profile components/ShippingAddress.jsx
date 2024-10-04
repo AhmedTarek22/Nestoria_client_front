@@ -382,7 +382,7 @@ export function ShippingAddress(props) {
             onClick={(e) => handleShippingAddress(e)}
             className="bg-transparent text-[#C26510] text-[17px] py-3 px-8 border border-[#C26510] rounded-3xl hover:bg-[#C26510] hover:text-white duration-500"
           >
-            Save Address 
+            Save Address
           </button>
         )}
         {isFoundedAddress && !isEditAddress && (
